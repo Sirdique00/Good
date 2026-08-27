@@ -31,6 +31,13 @@ Stores auditable usage metadata such as provider/model, token counts, latency, s
 ### security_audit_logs
 Stores security-sensitive event metadata with optional owner, bot, website, and session references. Secrets and private credentials must never be placed in `metadata`.
 
+## Level 2 private initialization entity
+
+### private.owner_bootstrap_tokens
+Stores only the SHA-256 hash of the one-time first-owner bootstrap credential, plus expiry and consumption timestamps. The table is in the private schema and has no `anon` or `authenticated` Data API grants.
+
+The plaintext bootstrap credential is not committed to GitHub and is never stored in the database.
+
 ## Lifecycle enums
 - `bot_status`: `ACTIVE`, `DISABLED`, `SUSPENDED`
 - `website_status`: `PENDING`, `ACTIVE`, `SUSPENDED`, `REVOKED`
@@ -47,17 +54,22 @@ Sensitive tables (`bot_secrets`, `bot_sessions`, usage, and audit logs) are read
 
 The `private` schema is not exposed to anonymous clients. The owner helper is `SECURITY DEFINER` with an empty `search_path` and only callable by authenticated users.
 
+The first-owner claim uses `public.claim_initial_owner(text)`. It is intentionally `SECURITY DEFINER`, restricted to `authenticated`, protected by a high-entropy one-time credential, and serialized with a transaction-level advisory lock. Once an owner exists, the function cannot initialize another owner.
+
 ## Index strategy
 Indexes cover:
-- bot status/creation;
+- bot status/creation and provider selection;
 - bot website lookup by bot/status and recent activity;
 - active secret lookup by bot/website;
 - session lookup by bot/website/expiry;
-- usage history by bot/website/provider;
-- audit history by time/event/bot/actor.
+- usage history by bot/website/provider/session;
+- audit history by time/event/bot/actor/website/session.
 
 ## Migration
-Level 1 was applied as migration `level_1_database_foundation`. The V2 project had no prior migration history before this migration.
+- `level_1_database_foundation` — core V2 schema.
+- `level_2_owner_auth_foundation` — owner initialization boundary and missing foreign-key indexes.
+
+The one-time bootstrap credential hash is environment initialization state and is provisioned separately from source control.
 
 ## Future Level 1-compatible work
 Public registration, secret verification, session issuance, chat authorization, and provider calls must not bypass the RLS/security design. They will use server-side Edge Functions/RPCs with narrowly scoped data access.
