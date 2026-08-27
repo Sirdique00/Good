@@ -18,24 +18,42 @@
         </div>
       </div>
 
-      <h1 id="page-title">Owner sign in</h1>
-      <p class="subtitle">Sign in with the platform owner account. Customer accounts cannot access this console.</p>
+      <div id="login-view">
+        <h1 id="page-title">Owner sign in</h1>
+        <p class="subtitle">Sign in with the platform owner account. Customer accounts cannot access this console.</p>
 
-      <form id="owner-login" novalidate>
-        <div class="field">
-          <label for="email">Owner email</label>
-          <input id="email" name="email" type="email" autocomplete="username" required maxlength="254">
-        </div>
+        <form id="owner-login" novalidate>
+          <div class="field">
+            <label for="email">Owner email</label>
+            <input id="email" name="email" type="email" autocomplete="username" required maxlength="254">
+          </div>
 
-        <div class="field">
-          <label for="password">Password</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
-        </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
+          </div>
 
-        <button type="submit">Sign in</button>
-      </form>
+          <button type="submit">Sign in</button>
+        </form>
 
-      <button id="reset-password" class="secondary" type="button">Forgot password?</button>
+        <button id="reset-password" class="secondary" type="button">Forgot password?</button>
+      </div>
+
+      <div id="reset-view" hidden>
+        <h1>Set a new password</h1>
+        <p class="subtitle">Choose a new password for the authenticated owner account.</p>
+        <form id="change-password" novalidate>
+          <div class="field">
+            <label for="new-password">New password</label>
+            <input id="new-password" name="newPassword" type="password" autocomplete="new-password" required minlength="12">
+          </div>
+          <div class="field">
+            <label for="confirm-password">Confirm new password</label>
+            <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" required minlength="12">
+          </div>
+          <button type="submit">Update password</button>
+        </form>
+      </div>
 
       <p class="status" data-auth-status hidden role="alert"></p>
       <p class="security-note">Owner authorization is verified by the backend database policy. The browser never decides whether an account is an owner.</p>
