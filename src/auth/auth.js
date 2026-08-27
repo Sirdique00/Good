@@ -10,11 +10,11 @@ function showStatus(message, type = 'error') {
   status.hidden = false;
 }
 
-function setBusy(button, busy) {
+function setBusy(button, busy, idleLabel = 'Sign in') {
   if (!button) return;
   button.disabled = busy;
   button.setAttribute('aria-busy', String(busy));
-  button.textContent = busy ? 'Checking…' : 'Sign in';
+  button.textContent = busy ? 'Working…' : idleLabel;
 }
 
 async function isPlatformOwner() {
@@ -62,9 +62,7 @@ async function handleLogin(event) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
 
-    if (!data.session) {
-      throw new Error('AUTH_SESSION_NOT_CREATED');
-    }
+    if (!data.session) throw new Error('AUTH_SESSION_NOT_CREATED');
 
     const owner = await isPlatformOwner();
     if (!owner) {
@@ -105,6 +103,41 @@ async function handlePasswordReset(event) {
   }
 }
 
+async function handleChangePassword(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const button = form.querySelector('button[type="submit"]');
+  const newPassword = form.newPassword.value;
+  const confirmPassword = form.confirmPassword.value;
+
+  if (newPassword.length < 12) {
+    showStatus('Use a password with at least 12 characters.');
+    return;
+  }
+  if (newPassword !== confirmPassword) {
+    showStatus('The new passwords do not match.');
+    return;
+  }
+
+  setBusy(button, true, 'Update password');
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error('AUTH_SESSION_REQUIRED');
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) throw error;
+
+    showStatus('Password updated successfully. You can now sign in again.', 'success');
+    await supabase.auth.signOut();
+    setTimeout(() => window.location.replace('/Good/auth.html'), 900);
+  } catch (error) {
+    console.error('Password update failed:', error);
+    showStatus('Unable to update the password. Please request a new reset link.');
+  } finally {
+    setBusy(button, false, 'Update password');
+  }
+}
+
 async function handleLogout() {
   await supabase.auth.signOut();
   window.location.replace('/Good/auth.html');
@@ -140,12 +173,20 @@ export function bindLogout() {
 }
 
 if (document.body?.dataset.page === 'auth') {
-  document.querySelector('#owner-login')?.addEventListener('submit', handleLogin);
-  document.querySelector('#reset-password')?.addEventListener('click', handlePasswordReset);
-  redirectIfAuthenticated();
-
   const params = new URLSearchParams(window.location.search);
-  if (params.get('error') === 'access-denied') {
-    showStatus('Access denied. Only the platform owner can enter this console.');
+  const resetMode = params.get('mode') === 'reset';
+
+  if (resetMode) {
+    document.querySelector('#login-view')?.setAttribute('hidden', '');
+    document.querySelector('#reset-view')?.removeAttribute('hidden');
+    document.querySelector('#change-password')?.addEventListener('submit', handleChangePassword);
+  } else {
+    document.querySelector('#owner-login')?.addEventListener('submit', handleLogin);
+    document.querySelector('#reset-password')?.addEventListener('click', handlePasswordReset);
+    redirectIfAuthenticated();
+
+    if (params.get('error') === 'access-denied') {
+      showStatus('Access denied. Only the platform owner can enter this console.');
+    }
   }
 }
