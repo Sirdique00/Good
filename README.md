@@ -6,8 +6,8 @@ This repository is being implemented level-by-level with a strict gate: each lev
 
 ## Current level
 
-**Level 1 — Supabase + database foundation**
+**Level 2 — Owner authentication & authorization**
 
-The V2 database foundation lives in the Supabase project **Sadeeq bot**. The legacy **Sadeeq ai** project is treated as V1/reference and is not modified by this rebuild.
+The V2 database foundation and owner authentication live in the Supabase project **Sadeeq bot**. The legacy **Sadeeq ai** project is treated as V1/reference and is not modified by this rebuild.
 
 See `docs/PROGRESS.md` for the current implementation status.
