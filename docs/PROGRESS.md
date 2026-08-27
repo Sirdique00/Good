@@ -61,18 +61,22 @@ Each level must be implemented, reviewed, tested, security-checked, regression-c
 - Owner bootstrap transaction uses an advisory lock to prevent concurrent initialization races.
 - Added missing foreign-key indexes discovered during performance review.
 - Sadeeq AI logo asset and private-console branding foundation.
+- Hardened bootstrap RPC to return no owner row to the browser.
+- Revoked the previously exposed bootstrap credential and replaced it with a fresh credential; plaintext is not stored in Supabase or GitHub.
 
 ### Security verification
 - Anonymous access to owner data remains blocked.
 - Non-owner authenticated sessions are denied and locally signed out.
 - `claim_initial_owner` is not executable by `anon`.
 - `claim_initial_owner` has a fixed `search_path` and uses a transaction-level advisory lock.
+- The bootstrap RPC returns no owner record to the browser.
+- The previously exposed bootstrap credential has been invalidated.
 - The Supabase Security Advisor warning for the bootstrap function is intentional: it is a narrowly scoped one-time `SECURITY DEFINER` function requiring a high-entropy credential, and it is not usable by `anon`.
 - Performance Advisor foreign-key findings were remediated with explicit indexes. Empty-table unused-index notices are expected until real workload exists.
 
 ### Remaining Level 2 gates
 1. Configure the production Auth Site URL and exact password-reset/owner-initialization redirect URL in Supabase Auth settings.
-2. Perform the first owner initialization using the one-time bootstrap credential.
+2. Perform the first owner initialization using the fresh one-time bootstrap credential delivered out-of-band.
 3. Verify owner login, non-owner denial, session persistence, logout, password recovery, and protected-route behavior on the deployed GitHub Pages site.
 4. Re-run security/performance advisors after final Auth configuration.
 5. Perform regression review against Level 1 and confirm Level 3 compatibility.
