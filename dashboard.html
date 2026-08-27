@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Sadeeq AI — Owner Console</title>
+  <link rel="stylesheet" href="./assets/css/auth.css">
+</head>
+<body>
+  <main>
+    <section class="auth-card" aria-labelledby="page-title">
+      <div class="brand">
+        <img src="./assets/brand/sadeeq-logo.svg" alt="Sadeeq AI logo">
+        <div>
+          <strong>Sadeeq AI</strong>
+          <span>Owner Console</span>
+        </div>
+      </div>
+      <h1 id="page-title">Secure owner area</h1>
+      <p class="subtitle" id="owner-state">Checking your owner session…</p>
+      <button data-logout type="button">Sign out</button>
+    </section>
+  </main>
+
+  <script type="module">
+    import { requireOwner, bindLogout } from './src/auth/auth.js';
+
+    const state = document.querySelector('#owner-state');
+    const result = await requireOwner();
+    if (result) {
+      state.textContent = `Authenticated as ${result.owner.display_name || 'Sadeeq AI Owner'}.`;
+      bindLogout();
+    }
+  </script>
+</body>
+</html>

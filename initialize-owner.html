@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Sadeeq AI — Owner Initialization</title>
+  <link rel="stylesheet" href="./assets/css/auth.css">
+</head>
+<body>
+  <main>
+    <section class="auth-card" aria-labelledby="page-title">
+      <div class="brand">
+        <img src="./assets/brand/sadeeq-logo.svg" alt="Sadeeq AI logo">
+        <div>
+          <strong>Sadeeq AI</strong>
+          <span>One-time Owner Initialization</span>
+        </div>
+      </div>
+
+      <h1 id="page-title">Initialize owner account</h1>
+      <p class="subtitle">This page is only for the first platform-owner setup. The bootstrap credential can be used once and is never stored in plaintext.</p>
+
+      <form id="owner-initialize" novalidate>
+        <div class="field">
+          <label for="email">Owner email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required maxlength="254">
+        </div>
+        <div class="field">
+          <label for="password">Owner password</label>
+          <input id="password" name="password" type="password" autocomplete="new-password" required minlength="12">
+        </div>
+        <div class="field">
+          <label for="bootstrap-token">One-time bootstrap credential</label>
+          <input id="bootstrap-token" name="bootstrapToken" type="password" autocomplete="off" required minlength="32" spellcheck="false">
+        </div>
+        <button type="submit">Initialize owner</button>
+      </form>
+
+      <p class="status" data-auth-status hidden role="alert"></p>
+      <p class="security-note">After initialization, public signup is not part of Sadeeq AI. Only the initialized owner account can enter the Owner Console.</p>
+    </section>
+  </main>
+
+  <script type="module" src="./src/auth/initialize-owner.js"></script>
+</body>
+</html>

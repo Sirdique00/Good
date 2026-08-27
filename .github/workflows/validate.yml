@@ -1,0 +1,36 @@
+name: Validate Sadeeq AI V2
+
+on:
+  push:
+    branches: [main, level-1-database-foundation, level-2-owner-auth]
+  pull_request:
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check src/config/supabase.js
+          node --check src/auth/auth.js
+          node --check src/auth/initialize-owner.js
+
+      - name: Check for privileged secrets in frontend source
+        run: |
+          if grep -RniE 'service_role|sb_secret_|SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY' --include='*.html' --include='*.js' --include='*.css' src assets auth.html dashboard.html initialize-owner.html index.html; then
+            echo 'Privileged secret reference found in frontend source.'
+            exit 1
+          fi
+
+      - name: Check required Level 2 files
+        run: |
+          test -f auth.html
+          test -f dashboard.html
+          test -f initialize-owner.html
+          test -f src/auth/auth.js
+          test -f src/auth/initialize-owner.js
+          test -f src/config/supabase.js
+          test -f assets/brand/sadeeq-logo.svg
