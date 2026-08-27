@@ -34,6 +34,28 @@ Supabase Edge Functions / server-side runtime
 The initial schema contains:
 `owner_profiles`, `bots`, `bot_secrets`, `bot_websites`, `bot_sessions`, `ai_providers`, `bot_usage`, and `security_audit_logs`.
 
+## Owner authentication flow
+```text
+Owner Initialization (one time)
+  -> Supabase Auth account
+  -> email confirmation when enabled
+  -> one-time bootstrap credential
+  -> claim_initial_owner()
+  -> owner_profiles
+
+Normal Login
+  -> Supabase Auth password session
+  -> RLS-backed owner_profiles check
+  -> Owner Console
+
+Unauthorized session
+  -> owner check fails
+  -> local session sign-out
+  -> access denied
+```
+
+The browser uses only the Supabase publishable key. Privileged authorization comes from database RLS and the owner profile, not from frontend variables or URL state.
+
 ## Public runtime intent
 ```text
 iframe
