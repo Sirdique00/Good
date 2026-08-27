@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Sadeeq AI — Owner Sign In</title>
+  <link rel="stylesheet" href="./assets/css/auth.css">
+</head>
+<body data-page="auth">
+  <main>
+    <section class="auth-card" aria-labelledby="page-title">
+      <div class="brand">
+        <img src="./assets/brand/sadeeq-logo.svg" alt="Sadeeq AI logo">
+        <div>
+          <strong>Sadeeq AI</strong>
+          <span>Private Owner Console</span>
+        </div>
+      </div>
+
+      <h1 id="page-title">Owner sign in</h1>
+      <p class="subtitle">Sign in with the platform owner account. Customer accounts cannot access this console.</p>
+
+      <form id="owner-login" novalidate>
+        <div class="field">
+          <label for="email">Owner email</label>
+          <input id="email" name="email" type="email" autocomplete="username" required maxlength="254">
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
+        </div>
+
+        <button type="submit">Sign in</button>
+      </form>
+
+      <button id="reset-password" class="secondary" type="button">Forgot password?</button>
+
+      <p class="status" data-auth-status hidden role="alert"></p>
+      <p class="security-note">Owner authorization is verified by the backend database policy. The browser never decides whether an account is an owner.</p>
+    </section>
+  </main>
+
+  <script type="module" src="./src/auth/auth.js"></script>
+</body>
+</html>
